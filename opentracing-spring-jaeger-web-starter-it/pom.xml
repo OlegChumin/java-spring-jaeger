@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2018-2021 The OpenTracing Authors
+    Copyright 2018-2026 The OpenTracing Authors
 
     Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
     in compliance with the License. You may obtain a copy of the License at
@@ -27,6 +27,7 @@
 
   <properties>
     <main.basedir>${project.basedir}/..</main.basedir>
+    <skip.integration.tests>true</skip.integration.tests>
   </properties>
 
   <dependencies>
@@ -78,16 +79,17 @@
       <version>${version.org.awaitility-awaitility}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers</artifactId>
-      <version>${version.test-containers}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${version.maven-surefire-plugin}</version>
+        <configuration>
+          <skipTests>${skip.integration.tests}</skipTests>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
         <version>${version.maven-deploy-plugin}</version>
@@ -98,5 +100,14 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>run-integration-tests</id>
+      <properties>
+        <skip.integration.tests>false</skip.integration.tests>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>
