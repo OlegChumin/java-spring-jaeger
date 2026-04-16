@@ -22,7 +22,6 @@ import io.opentracing.contrib.java.spring.jaeger.starter.TracerBuilderCustomizer
 import io.opentracing.contrib.java.spring.jaeger.starter.customizers.B3CodecTracerBuilderCustomizer;
 import io.opentracing.contrib.java.spring.jaeger.starter.customizers.ExpandExceptionLogsTracerBuilderCustomizer;
 import io.opentracing.contrib.java.spring.jaeger.starter.customizers.HigherBitTracerBuilderCustomizer;
-
 import io.opentracing.contrib.java.spring.jaeger.starter.customizers.TraceContextCodecTracerBuilderCustomizer;
 import java.util.List;
 
@@ -33,6 +32,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.TestPropertySource;
 
+/**
+ * Описывает поведение компонента MultipleCustomizersEnabledSpringTest.
+ */
 @SpringBootTest(classes = {
     MultipleCustomizersEnabledSpringTest.MockTracerConfiguration.class,
     JaegerAutoConfiguration.class
@@ -46,11 +48,13 @@ import org.springframework.test.context.TestPropertySource;
         "opentracing.jaeger.enable-128-bit-traces=true"
     }
 )
+@org.junit.jupiter.api.DisplayName("Тесты компонента MultipleCustomizersEnabledSpringTest")
 public class MultipleCustomizersEnabledSpringTest extends AbstractTracerSpringTest {
 
   @Autowired
   private List<TracerBuilderCustomizer> customizers;
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testCustomizersShouldContainB3Customizer() {
     assertThat(customizers)
@@ -77,6 +81,7 @@ public class MultipleCustomizersEnabledSpringTest extends AbstractTracerSpringTe
 
     @Override
     public void customize(Builder builder) {
+      // Пустая реализация нужна для проверки регистрации нескольких customizer-компонентов.
     }
   }
 }

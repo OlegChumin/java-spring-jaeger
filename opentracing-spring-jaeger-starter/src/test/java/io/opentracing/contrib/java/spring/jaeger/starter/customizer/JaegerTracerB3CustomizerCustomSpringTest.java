@@ -33,6 +33,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 
+/**
+ * Описывает поведение компонента JaegerTracerB3CustomizerCustomSpringTest.
+ */
 @TestPropertySource(
     properties = {
         "spring.main.banner-mode=off",
@@ -40,6 +43,7 @@ import org.springframework.test.context.TestPropertySource;
     }
 )
 @Import(JaegerTracerB3CustomizerCustomSpringTest.TestConfiguration.class)
+@org.junit.jupiter.api.DisplayName("Тесты компонента JaegerTracerB3CustomizerCustomSpringTest")
 public class JaegerTracerB3CustomizerCustomSpringTest extends AbstractTracerSpringTest {
 
   @Autowired
@@ -54,6 +58,7 @@ public class JaegerTracerB3CustomizerCustomSpringTest extends AbstractTracerSpri
     }
   }
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testCustomizersHttpHeadersShouldContainB3() {
     TextMap textMap = createTextMap();
@@ -63,6 +68,7 @@ public class JaegerTracerB3CustomizerCustomSpringTest extends AbstractTracerSpri
     assertOnB3Headers(context);
   }
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testCustomizersTextMapShouldContainB3() {
     TextMap textMap = createTextMap();

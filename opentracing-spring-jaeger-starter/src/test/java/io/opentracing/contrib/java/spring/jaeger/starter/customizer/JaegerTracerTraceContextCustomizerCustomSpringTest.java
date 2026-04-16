@@ -32,6 +32,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 
+/**
+ * Описывает поведение компонента JaegerTracerTraceContextCustomizerCustomSpringTest.
+ */
 @TestPropertySource(
     properties = {
         "spring.main.banner-mode=off",
@@ -39,6 +42,7 @@ import org.springframework.test.context.TestPropertySource;
     }
 )
 @Import(JaegerTracerTraceContextCustomizerCustomSpringTest.TestConfiguration.class)
+@org.junit.jupiter.api.DisplayName("Тесты компонента JaegerTracerTraceContextCustomizerCustomSpringTest")
 public class JaegerTracerTraceContextCustomizerCustomSpringTest extends AbstractTracerSpringTest {
 
   @Autowired
@@ -53,6 +57,7 @@ public class JaegerTracerTraceContextCustomizerCustomSpringTest extends Abstract
     }
   }
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testCustomizersHttpHeadersShouldContainTraceContext() {
     TextMap textMap = createTextMap();
@@ -62,6 +67,7 @@ public class JaegerTracerTraceContextCustomizerCustomSpringTest extends Abstract
     assertOnTraceContextHeaders(context);
   }
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testCustomizersTextMapShouldContainTraceContext() {
     TextMap textMap = createTextMap();

@@ -16,6 +16,9 @@ package io.opentracing.contrib.java.spring.jaeger.starter;
 import io.jaegertracing.spi.Reporter;
 import java.util.Collection;
 
+/**
+ * Описывает поведение компонента ReporterAppender.
+ */
 @FunctionalInterface
 public interface ReporterAppender {
 

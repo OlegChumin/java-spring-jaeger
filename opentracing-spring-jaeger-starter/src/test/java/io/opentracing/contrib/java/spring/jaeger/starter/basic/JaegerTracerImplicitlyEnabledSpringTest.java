@@ -20,13 +20,18 @@ import io.opentracing.contrib.java.spring.jaeger.starter.AbstractTracerSpringTes
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 
+/**
+ * Описывает поведение компонента JaegerTracerImplicitlyEnabledSpringTest.
+ */
 @TestPropertySource(
     properties = {
         "spring.main.banner-mode=off"
     }
 )
+@org.junit.jupiter.api.DisplayName("Тесты компонента JaegerTracerImplicitlyEnabledSpringTest")
 public class JaegerTracerImplicitlyEnabledSpringTest extends AbstractTracerSpringTest {
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testIfTracerIsJaegerTracer() {
     assertThat(tracer).isNotNull();

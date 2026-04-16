@@ -31,7 +31,6 @@ import io.opentracing.contrib.java.spring.jaeger.starter.JaegerConfigurationProp
 import io.opentracing.contrib.java.spring.jaeger.starter.customizers.B3CodecTracerBuilderCustomizer;
 import io.opentracing.contrib.java.spring.jaeger.starter.customizers.ExpandExceptionLogsTracerBuilderCustomizer;
 import io.opentracing.contrib.java.spring.jaeger.starter.customizers.HigherBitTracerBuilderCustomizer;
-
 import io.opentracing.contrib.java.spring.jaeger.starter.customizers.TraceContextCodecTracerBuilderCustomizer;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -49,6 +48,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 /**
+ * Описывает поведение компонента JaegerAutoConfiguration.
+ *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 @Configuration
@@ -59,8 +60,11 @@ import org.springframework.util.StringUtils;
 @EnableConfigurationProperties(JaegerConfigurationProperties.class)
 public class JaegerAutoConfiguration {
 
-  @Autowired(required = false)
-  private List<TracerBuilderCustomizer> tracerCustomizers = Collections.emptyList();
+  private final List<TracerBuilderCustomizer> tracerCustomizers;
+
+  public JaegerAutoConfiguration(@Autowired(required = false) List<TracerBuilderCustomizer> tracerCustomizers) {
+    this.tracerCustomizers = tracerCustomizers == null ? Collections.emptyList() : tracerCustomizers;
+  }
 
   @Bean
   public io.opentracing.Tracer tracer(Sampler sampler,

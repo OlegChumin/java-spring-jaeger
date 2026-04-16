@@ -22,16 +22,21 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
 
+/**
+ * Описывает поведение компонента JaegerTracerHigherBitCustomizerDisabledSpringTest.
+ */
 @TestPropertySource(
     properties = {
         "spring.main.banner-mode=off",
         "opentracing.jaeger.enable-128-bit-traces=false"
     }
 )
+@org.junit.jupiter.api.DisplayName("Тесты компонента JaegerTracerHigherBitCustomizerDisabledSpringTest")
 public class JaegerTracerHigherBitCustomizerDisabledSpringTest {
   @Autowired(required = false)
   private List<TracerBuilderCustomizer> customizers;
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testCustomizersShouldContainB3Customizer() {
     if (customizers == null) {

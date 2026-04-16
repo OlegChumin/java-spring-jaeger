@@ -15,6 +15,9 @@ package io.opentracing.contrib.java.spring.jaeger.starter;
 
 import io.jaegertracing.internal.JaegerTracer;
 
+/**
+ * Описывает поведение компонента TracerBuilderCustomizer.
+ */
 @FunctionalInterface
 public interface TracerBuilderCustomizer {
 

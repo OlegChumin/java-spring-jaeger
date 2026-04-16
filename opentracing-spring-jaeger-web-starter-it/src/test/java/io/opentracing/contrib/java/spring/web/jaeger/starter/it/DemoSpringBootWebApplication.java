@@ -18,8 +18,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Описывает поведение компонента DemoSpringBootWebApplication.
+ */
 @SpringBootApplication
 @RestController
+@org.junit.jupiter.api.DisplayName("Тесты компонента DemoSpringBootWebApplication")
 public class DemoSpringBootWebApplication {
 
   public static void main(String[] args) {

@@ -22,6 +22,11 @@ import io.jaegertracing.spi.Reporter;
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.InstanceOfAssertFactories;
 
+/**
+ * Описывает поведение компонента AbstractSenderSpringTest.
+ */
+
+@org.junit.jupiter.api.DisplayName("Тесты компонента AbstractSenderSpringTest")
 public abstract class AbstractSenderSpringTest extends AbstractTracerSpringTest {
 
   protected void assertSenderClass(Class senderClass) {
@@ -37,14 +42,16 @@ public abstract class AbstractSenderSpringTest extends AbstractTracerSpringTest 
                   .filteredOn(new Condition<Object>() {
                     @Override
                     public boolean matches(Object value) {
-                        return value.getClass().equals(RemoteReporter.class);
+                      return value.getClass().equals(RemoteReporter.class);
                     }
-                    }).allSatisfy(rr -> {
-                      assertThat(rr)
-                        .extracting("sender")
-                        .extracting("class", as(InstanceOfAssertFactories.CLASS))
-                        .isEqualTo(senderClass);
-                    });
+                  })
+                  .isNotEmpty()
+                  .allSatisfy(rr -> {
+                    assertThat(rr)
+                      .extracting("sender")
+                      .extracting("class", as(InstanceOfAssertFactories.CLASS))
+                      .isEqualTo(senderClass);
+                  });
             });
   }
 }

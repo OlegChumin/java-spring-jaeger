@@ -16,6 +16,10 @@ package io.opentracing.contrib.java.spring.jaeger.starter.customizers;
 import io.jaegertracing.internal.JaegerTracer;
 import io.opentracing.contrib.java.spring.jaeger.starter.TracerBuilderCustomizer;
 
+/**
+ * Описывает поведение компонента ExpandExceptionLogsTracerBuilderCustomizer.
+ */
+
 public class ExpandExceptionLogsTracerBuilderCustomizer implements TracerBuilderCustomizer {
 
   @Override

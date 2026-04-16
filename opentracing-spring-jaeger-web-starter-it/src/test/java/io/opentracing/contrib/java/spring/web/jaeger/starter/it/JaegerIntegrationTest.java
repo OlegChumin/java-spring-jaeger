@@ -37,12 +37,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 
+/**
+ * Описывает поведение компонента JaegerIntegrationTest.
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
     classes = DemoSpringBootWebApplication.class,
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ContextConfiguration(initializers = JaegerIntegrationTest.Initializer.class)
+@org.junit.jupiter.api.DisplayName("Тесты компонента JaegerIntegrationTest")
 public class JaegerIntegrationTest {
 
   private static final int QUERY_PORT = 16686;
@@ -57,6 +61,7 @@ public class JaegerIntegrationTest {
 
   private RestTemplate restTemplate = new RestTemplate();
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testJaegerCollectsTraces() {
     final String operation = "hello";

@@ -16,6 +16,10 @@ package io.opentracing.contrib.java.spring.jaeger.starter.customizers;
 import io.jaegertracing.internal.JaegerTracer;
 import io.opentracing.contrib.java.spring.jaeger.starter.TracerBuilderCustomizer;
 
+/**
+ * Описывает поведение компонента HigherBitTracerBuilderCustomizer.
+ */
+
 public class HigherBitTracerBuilderCustomizer implements TracerBuilderCustomizer {
   @Override
   public void customize(JaegerTracer.Builder builder) {

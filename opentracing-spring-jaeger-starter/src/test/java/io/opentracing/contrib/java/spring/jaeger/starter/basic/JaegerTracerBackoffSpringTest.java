@@ -26,6 +26,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.TestPropertySource;
 
+/**
+ * Описывает поведение компонента JaegerTracerBackoffSpringTest.
+ */
 /*
  * The order of the classes matters here
  * In application code, auto-configuration classes are loaded last
@@ -41,8 +44,10 @@ import org.springframework.test.context.TestPropertySource;
         "opentracing.jaeger.enabled=true"
     }
 )
+@org.junit.jupiter.api.DisplayName("Тесты компонента JaegerTracerBackoffSpringTest")
 public class JaegerTracerBackoffSpringTest extends AbstractTracerSpringTest {
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testIfTracerIsMockTracer() {
     assertThat(tracer).isNotNull();

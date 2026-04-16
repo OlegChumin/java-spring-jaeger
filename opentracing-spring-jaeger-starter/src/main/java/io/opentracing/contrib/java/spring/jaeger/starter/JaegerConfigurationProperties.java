@@ -21,6 +21,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
+/**
+ * Описывает поведение компонента JaegerConfigurationProperties.
+ */
 @ConfigurationProperties("opentracing.jaeger")
 public class JaegerConfigurationProperties {
 
@@ -140,9 +143,9 @@ public class JaegerConfigurationProperties {
     final Map<String, String> tracerTagMaps = new HashMap<>();
     final String tracerTags = getProperty(Configuration.JAEGER_TAGS);
     if (tracerTags != null) {
-      final String[] tags = tracerTags.split("\\s*,\\s*");
-      for (String tag : tags) {
-        final String[] tagValue = tag.split("\\s*=\\s*");
+      final String[] envTagEntries = tracerTags.split("\\s*,\\s*");
+      for (String envTagEntry : envTagEntries) {
+        final String[] tagValue = envTagEntry.split("\\s*=\\s*");
         if (tagValue.length == 2) {
           tracerTagMaps.put(tagValue[0], tagValue[1]);
         }

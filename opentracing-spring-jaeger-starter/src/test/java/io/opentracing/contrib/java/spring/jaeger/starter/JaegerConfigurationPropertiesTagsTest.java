@@ -25,6 +25,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Описывает поведение компонента JaegerConfigurationPropertiesTagsTest.
+ */
+
+@org.junit.jupiter.api.DisplayName("Тесты компонента JaegerConfigurationPropertiesTagsTest")
 public class JaegerConfigurationPropertiesTagsTest {
 
   @Before
@@ -33,6 +38,7 @@ public class JaegerConfigurationPropertiesTagsTest {
     System.clearProperty(Configuration.JAEGER_TAGS);
   }
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void envTagsNotIncluded() {
     final Map<String, String> tagsInProperties = new HashMap<>();
@@ -44,6 +50,7 @@ public class JaegerConfigurationPropertiesTagsTest {
     assertThat(properties.determineTags()).containsOnly(entry("t1", "v1"), entry("t2", "v2"));
   }
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void envTagsIncluded() {
     System.setProperty(Configuration.JAEGER_TAGS, "t3, t4 = v4");
@@ -56,6 +63,34 @@ public class JaegerConfigurationPropertiesTagsTest {
     properties.setIncludeJaegerEnvTags(true);
 
     assertThat(properties.determineTags()).containsOnly(entry("t1", "v1"), entry("t2", "v2"), entry("t4", "v4"));
+  }
+
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
+  @Test
+  public void envTagsIncludedWithoutConfiguredTags() {
+    System.setProperty(Configuration.JAEGER_TAGS, "env = test, malformed");
+
+    final JaegerConfigurationProperties properties = new JaegerConfigurationProperties();
+    properties.setIncludeJaegerEnvTags(true);
+
+    assertThat(properties.determineTags()).containsOnly(entry("env", "test"));
+  }
+
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
+  @Test
+  public void envTagsOverrideConfiguredTags() {
+    System.setProperty(Configuration.JAEGER_TAGS, "shared = env, only-env = value");
+
+    final Map<String, String> tagsInProperties = new HashMap<>();
+    tagsInProperties.put("shared", "configured");
+    final JaegerConfigurationProperties properties = new JaegerConfigurationProperties();
+    properties.setTags(tagsInProperties);
+    properties.setIncludeJaegerEnvTags(true);
+
+    assertThat(properties.determineTags()).containsOnly(
+        entry("shared", "env"),
+        entry("only-env", "value")
+    );
   }
 
 }

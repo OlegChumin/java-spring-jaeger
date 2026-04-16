@@ -20,10 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * Описывает поведение компонента AbstractTracerSpringTest.
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     JaegerAutoConfiguration.class
 })
+@org.junit.jupiter.api.DisplayName("Тесты компонента AbstractTracerSpringTest")
 public abstract class AbstractTracerSpringTest {
 
   @Autowired(required = false)

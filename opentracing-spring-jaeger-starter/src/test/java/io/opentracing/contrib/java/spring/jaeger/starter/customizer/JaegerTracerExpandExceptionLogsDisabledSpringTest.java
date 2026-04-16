@@ -24,17 +24,22 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
 
+/**
+ * Описывает поведение компонента JaegerTracerExpandExceptionLogsDisabledSpringTest.
+ */
 @TestPropertySource(
     properties = {
         "spring.main.banner-mode=off",
         "opentracing.jaeger.expand-exception-logs=false"
     }
 )
+@org.junit.jupiter.api.DisplayName("Тесты компонента JaegerTracerExpandExceptionLogsDisabledSpringTest")
 public class JaegerTracerExpandExceptionLogsDisabledSpringTest extends AbstractTracerSpringTest {
 
   @Autowired(required = false)
   private List<TracerBuilderCustomizer> customizers;
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testCustomizersShouldContainExpandLogsCustomizer() {
     if (customizers == null) {

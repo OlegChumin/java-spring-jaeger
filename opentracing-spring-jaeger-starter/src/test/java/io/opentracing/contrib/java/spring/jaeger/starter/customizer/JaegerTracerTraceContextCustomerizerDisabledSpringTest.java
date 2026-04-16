@@ -24,17 +24,22 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
 
+/**
+ * Описывает поведение компонента JaegerTracerTraceContextCustomerizerDisabledSpringTest.
+ */
 @TestPropertySource(
     properties = {
         "spring.main.banner-mode=off",
         "opentracing.jaeger.enable-w3c-propagation=false"
     }
 )
+@org.junit.jupiter.api.DisplayName("Тесты компонента JaegerTracerTraceContextCustomerizerDisabledSpringTest")
 public class JaegerTracerTraceContextCustomerizerDisabledSpringTest extends AbstractTracerSpringTest {
 
   @Autowired(required = false)
   private List<TracerBuilderCustomizer> customizers;
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testCustomizersShouldContainTraceContextCustomizer() {
     if (customizers == null) {

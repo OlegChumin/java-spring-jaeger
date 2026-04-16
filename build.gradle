@@ -10,6 +10,7 @@ allprojects {
 subprojects {
     apply plugin: 'java-library'
     apply plugin: 'checkstyle'
+    apply plugin: 'jacoco'
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -25,14 +26,29 @@ subprojects {
         configFile = rootProject.file('config/checkstyle/checkstyle.xml')
     }
 
+    jacoco {
+        toolVersion = '0.8.14'
+    }
+
     dependencies {
         implementation platform('org.springframework.boot:spring-boot-dependencies:2.3.4.RELEASE')
         testImplementation platform('org.springframework.boot:spring-boot-dependencies:2.3.4.RELEASE')
 
         testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api'
     }
 
     test {
         useJUnitPlatform()
+        finalizedBy jacocoTestReport
+    }
+
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.required = true
+            html.required = true
+            csv.required = false
+        }
     }
 }

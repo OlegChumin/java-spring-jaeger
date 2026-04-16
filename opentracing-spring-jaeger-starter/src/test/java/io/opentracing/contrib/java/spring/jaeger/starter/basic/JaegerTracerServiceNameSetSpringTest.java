@@ -20,6 +20,9 @@ import io.opentracing.contrib.java.spring.jaeger.starter.AbstractTracerSpringTes
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 
+/**
+ * Описывает поведение компонента JaegerTracerServiceNameSetSpringTest.
+ */
 @TestPropertySource(
     properties = {
         "spring.main.banner-mode=off",
@@ -27,8 +30,10 @@ import org.springframework.test.context.TestPropertySource;
         "spring.application.name=foo"
     }
 )
+@org.junit.jupiter.api.DisplayName("Тесты компонента JaegerTracerServiceNameSetSpringTest")
 public class JaegerTracerServiceNameSetSpringTest extends AbstractTracerSpringTest {
 
+  @org.junit.jupiter.api.DisplayName("Проверяет тестовый сценарий")
   @Test
   public void testNameIsAsExpected() {
     assertThat(tracer).isNotNull();

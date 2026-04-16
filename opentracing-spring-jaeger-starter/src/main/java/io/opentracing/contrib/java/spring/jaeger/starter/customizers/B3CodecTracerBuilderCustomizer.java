@@ -18,6 +18,10 @@ import io.jaegertracing.internal.propagation.B3TextMapCodec;
 import io.opentracing.contrib.java.spring.jaeger.starter.TracerBuilderCustomizer;
 import io.opentracing.propagation.Format;
 
+/**
+ * Описывает поведение компонента B3CodecTracerBuilderCustomizer.
+ */
+
 public class B3CodecTracerBuilderCustomizer implements TracerBuilderCustomizer {
 
   @Override

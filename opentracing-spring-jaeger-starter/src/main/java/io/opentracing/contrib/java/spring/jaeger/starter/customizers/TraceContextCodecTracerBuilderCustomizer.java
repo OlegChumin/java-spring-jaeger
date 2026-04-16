@@ -18,6 +18,10 @@ import io.jaegertracing.internal.propagation.TraceContextCodec;
 import io.opentracing.contrib.java.spring.jaeger.starter.TracerBuilderCustomizer;
 import io.opentracing.propagation.Format;
 
+/**
+ * Описывает поведение компонента TraceContextCodecTracerBuilderCustomizer.
+ */
+
 public class TraceContextCodecTracerBuilderCustomizer implements TracerBuilderCustomizer {
 
   @Override
