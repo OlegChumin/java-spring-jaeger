@@ -1,25 +1,47 @@
-[![Build Status][ci-img]][ci] [![Released Version][maven-img]][maven]
+# java-spring-jaeger
 
-## Dependencies
+Spring Boot starter для подключения Jaeger как реализации OpenTracing `io.opentracing.Tracer`.
 
-The `opentracing-spring-jaeger-starter` simply contains the code needed to provide a Jaeger implementation of the OpenTracing's `io.opentracing.Tracer`
-interface.
+Проект основан на старом `opentracing-contrib/java-spring-jaeger`, но теперь развивается как отдельная ветка. Исходный upstream давно не обновлялся, поэтому этот репозиторий переведен на Gradle и подготовлен для дальнейшей поддержки внутри нашей вилки.
 
-For a project to be able to actually instrument a Spring stack, one or more of the purpose built starters (like `io.opentracing.contrib:opentracing-spring-web-starter` or `io.opentracing.contrib:opentracing-spring-cloud-starter`)  
-would also have to be included in the POM.
+## Состояние проекта
 
-The `opentracing-spring-jaeger-web-starter` starter is convenience starter that includes both `opentracing-spring-jaeger-starter` and `opentracing-spring-web-starter`
-This means that by including it, simple web Spring Boot microservices include all the necessary dependencies to instrument Web requests / responses and send traces to Jaeger.
+В текущей версии репозитория:
 
-The `opentracing-spring-jaeger-cloud-starter` starter is convenience starter that includes both `opentracing-spring-jaeger-starter` and `opentracing-spring-cloud-starter`
-This means that by including it, all parts of the Spring Cloud stack supported by Opentracing will be instrumented   
+* сборка переведена с Maven на Gradle;
+* добавлен Gradle Wrapper;
+* подключены Checkstyle и JaCoCo `0.8.14`;
+* JaCoCo генерирует XML и HTML отчеты;
+* тесты запускаются через JUnit Platform с поддержкой JUnit Vintage;
+* интеграционные тесты с Jaeger запускаются отдельным флагом Gradle;
+* JavaDoc и описания тестов переведены на русский.
 
+## Модули
 
-## Library versions
+* `opentracing-spring-jaeger-starter` - базовый starter, который создает Jaeger-реализацию OpenTracing `Tracer`.
+* `opentracing-spring-jaeger-web-starter` - удобный web-starter, который подключает `opentracing-spring-jaeger-starter` и `opentracing-spring-web-starter`.
+* `opentracing-spring-jaeger-cloud-starter` - удобный cloud-starter, который подключает `opentracing-spring-jaeger-starter` и `opentracing-spring-cloud-starter`.
+* `opentracing-spring-jaeger-web-starter-it` - интеграционные тесты для web-starter.
 
-Versions 1.x.y of the library are meant to target Spring Boot 2.x while versions 0.x.y are meant to be used with Spring Boot 1.5
+## Версии библиотек
 
-## Configuration
+Исторически версии `1.x.y` были рассчитаны на Spring Boot 2.x, а версии `0.x.y` - на Spring Boot 1.5.
+
+Текущая Gradle-сборка использует Spring Boot dependency management `2.3.4.RELEASE` и Java 8 source/target compatibility.
+
+## Подключение в приложение
+
+Для web-приложения обычно достаточно подключить `opentracing-spring-jaeger-web-starter`.
+
+Gradle:
+
+```groovy
+dependencies {
+    implementation 'io.opentracing.contrib:opentracing-spring-jaeger-web-starter'
+}
+```
+
+Maven:
 
 ```xml
 <dependency>
@@ -28,7 +50,17 @@ Versions 1.x.y of the library are meant to target Spring Boot 2.x while versions
 </dependency>
 ```
 
-or
+Для Spring Cloud можно использовать `opentracing-spring-jaeger-cloud-starter`.
+
+Gradle:
+
+```groovy
+dependencies {
+    implementation 'io.opentracing.contrib:opentracing-spring-jaeger-cloud-starter'
+}
+```
+
+Maven:
 
 ```xml
 <dependency>
@@ -37,172 +69,265 @@ or
 </dependency>
 ```
 
-Either dependency will ensure that Spring Boot will auto configure a Jaeger implementation of OpenTracing's `Tracer` when the application starts.
+Любая из этих зависимостей включает автонастройку Jaeger-реализации OpenTracing `Tracer` при старте Spring Boot приложения.
 
-If no settings are changed, spans will be reported to the UDP port `6831` of `localhost`.
-The simplest way to change this behavior is to set the following properties:
+## Базовая настройка
 
-```
+Если настройки не менять, spans отправляются через UDP на `localhost:6831`.
+
+Для UDP sender:
+
+```properties
 opentracing.jaeger.udp-sender.host=jaegerhost
-opentracing.jaeger.udp-sender.port=portNumber
+opentracing.jaeger.udp-sender.port=6831
 ```
 
-for the UDP sender, or use an HTTP sender by setting the following property:
- 
-`opentracing.jaeger.http-sender.url = http://jaegerhost:portNumber/api/traces` 
-   
+Для HTTP sender:
 
-## Configuration options
+```properties
+opentracing.jaeger.http-sender.url=http://jaegerhost:14268/api/traces
+```
 
-All the available configuration options can be seen in [JaegerConfigurationProperties](opentracing-spring-jaeger-starter/src/main/java/io/opentracing/contrib/java/spring/jaeger/starter/JaegerAutoConfiguration.java).
-The prefix to be used for these properties is `opentracing.jaeger`.
-Furthermore, the service name is configured via the standard Spring Cloud `spring.application.name` property.
+Если HTTP sender настроен, UDP sender не используется.
 
-Beware to use the correct syntax for properties that are camel-case in `JaegerConfigurationProperties`.
+## Параметры конфигурации
 
-* For properties / yaml files use `-`. For example `opentracing.jaeger.log-spans=true`
-* For environment variables use `_`. For example `OPENTRACING_JAEGER_LOG_SPANS` 
+Все параметры конфигурации описаны в [`JaegerConfigurationProperties`](opentracing-spring-jaeger-starter/src/main/java/io/opentracing/contrib/java/spring/jaeger/starter/JaegerConfigurationProperties.java).
 
-## Defaults
+Префикс всех свойств:
 
-If no configuration options are changed and the user does not manually provide any of the beans that the 
-auto-configuration process provides, the following defaults are used:
+```properties
+opentracing.jaeger
+```
 
-* `unknown-spring-boot` Will be used as the service-name if no value has been specified to the property `spring.application.name` or `opentracing.jaeger.service-name` (which has the highest priority). 
-* `CompositeReporter` is provided which contains the following delegates:
-  - `LoggingReporter` for reporting spans to the console
-  - `RemoteReporter` that contains a `UdpSender` that sends spans to `localhost:6831` 
-* `ConstSampler` with the value of `true`. This means that every trace will be sampled
-* `NoopMetricsFactory` is used - effectively meaning that no metrics will be collected
+Имя сервиса можно задать через стандартное свойство Spring:
+
+```properties
+spring.application.name=my-service
+```
+
+Также можно задать его напрямую:
+
+```properties
+opentracing.jaeger.service-name=my-service
+```
+
+Для camelCase-полей в `JaegerConfigurationProperties` используйте стандартный Spring Boot relaxed binding:
+
+* в `properties` и `yaml` - kebab-case, например `opentracing.jaeger.log-spans=true`;
+* в переменных окружения - underscore-case, например `OPENTRACING_JAEGER_LOG_SPANS`.
+
+## Значения по умолчанию
+
+Если пользователь не переопределяет beans, автонастройка создает следующие компоненты:
+
+* service name: `unknown-spring-boot`, если не заданы `spring.application.name` или `opentracing.jaeger.service-name`;
+* `CompositeReporter`, который содержит:
+  * `LoggingReporter` для вывода spans в консоль;
+  * `RemoteReporter` с `UdpSender`, отправляющим spans на `localhost:6831`;
+* `ConstSampler` со значением `true`, то есть по умолчанию сэмплируются все traces;
+* `NoopMetricsFactory`, то есть метрики Jaeger-клиента не собираются.
 
 ## Senders
 
-Configuring senders is as simple as setting a couple necessary properties
-
 ### HTTP Sender
 
-`opentracing.jaeger.http-sender.url = http://jaegerhost:portNumber/api/traces`
+```properties
+opentracing.jaeger.http-sender.url=http://jaegerhost:14268/api/traces
+```
 
-It's possible to configure authentication on the HTTP sender by specifying an username and password:
+Аутентификация по username/password:
 
-`opentracing.jaeger.http-sender.username = username`
-`opentracing.jaeger.http-sender.password = password`
+```properties
+opentracing.jaeger.http-sender.username=username
+opentracing.jaeger.http-sender.password=password
+```
 
-Or by specifying a bearer token:
+Аутентификация через bearer token:
 
-`opentracing.jaeger.http-sender.authtoken = token`
- 
-
-Note that when an HTTP Sender is defined, the UDP sender is not used, even if it has been configured
+```properties
+opentracing.jaeger.http-sender.authtoken=token
+```
 
 ### UDP Sender
 
-`opentracing.jaeger.udp-sender.host=jaegerhost`
-`opentracing.jaeger.udp-sender.port=portNumber`
+```properties
+opentracing.jaeger.udp-sender.host=jaegerhost
+opentracing.jaeger.udp-sender.port=6831
+```
 
-## Common cases
+## Частые сценарии
 
-### Set service name 
+### Задать имя сервиса
 
-Set `spring.application.name` to the desired name
+```properties
+spring.application.name=my-service
+```
 
-### Log Spans
+или:
 
-By default spans are logged to the console. This can be disabled by setting:
+```properties
+opentracing.jaeger.service-name=my-service
+```
 
-`opentracing.jaeger.log-spans = false`
+### Отключить логирование spans в консоль
 
-### Additional reporters
+По умолчанию spans логируются в консоль. Отключение:
 
-By defining a bean of type `ReporterAppender`, the code has the chance to add any Reporter without 
-having to forgo what the auto-configuration provides  
+```properties
+opentracing.jaeger.log-spans=false
+```
+
+### Добавить дополнительные reporters
+
+Можно объявить bean типа `ReporterAppender`. Он получает список reporters, созданных автонастройкой, и может добавить в него дополнительные reporters.
 
 ### Sampling
 
-* Const sampler
+Const sampler:
 
-  `opentracing.jaeger.const-sampler.decision = true | false` 
+```properties
+opentracing.jaeger.const-sampler.decision=true
+```
 
-* Probabilistic sampler
+Probabilistic sampler:
 
-  `opentracing.jaeger.probabilistic-sampler.sampling-rate = value` 
-  
-  Where `value` is between `0.0` (no sampling) and `1.0` (sampling of every request)
+```properties
+opentracing.jaeger.probabilistic-sampler.sampling-rate=0.5
+```
 
-* Rate-limiting sampler
+Значение должно быть в диапазоне от `0.0` до `1.0`.
 
-  `opentracing.jaeger.rate-limiting-sampler.max-traces-per-second = value` 
-  
-  Configures that traces are sampled with a certain constant rate. For example, when sampler.param=2.0 it will sample requests with the rate of 2 traces per second.
-  
-* Remote sampler
+Rate-limiting sampler:
 
-  Remote sampler consults Jaeger agent for the appropriate sampling strategy to use in the current service. This allows controlling the sampling strategies in the services from a central configuration in Jaeger backend.
-  It can be configured like so:
-  
-  `opentracing.jaeger.remote-controlled-sampler.host-port=localhost:5778`
-  
-  
-The samplers above are mutually exclusive.
+```properties
+opentracing.jaeger.rate-limiting-sampler.max-traces-per-second=2.0
+```
 
-A custom sampler could of course be provided by declaring a bean of type `io.jaegertracing.samplers.Sampler`
+Remote sampler:
 
-### Propagate headers in B3 format (for compatibility with Zipkin collectors)
+```properties
+opentracing.jaeger.remote-controlled-sampler.host-port=localhost:5778
+```
 
-`opentracing.jaeger.enable-b3-propagation = true`
+Эти sampler-настройки взаимоисключающие. При необходимости можно объявить собственный bean типа `io.jaegertracing.spi.Sampler`.
 
-### Propagate headers in W3C Trace Context format
+### Распространять заголовки в B3-формате
 
-`opentracing.jaeger.enable-w3c-propagation = true`
+Для совместимости с Zipkin:
 
-## Advanced cases
+```properties
+opentracing.jaeger.enable-b3-propagation=true
+```
 
-### Manual bean provisioning
+### Распространять заголовки в W3C Trace Context
 
-Any of the following beans can be provided by the application (by adding configuring them as bean with `@Bean` for example)
-and will be used to by the Tracer instead of the auto-configured beans.
+```properties
+opentracing.jaeger.enable-w3c-propagation=true
+```
 
-* `io.jaegertracing.samplers.Sampler`
-* `io.jaegertracing.metrics.MetricsFactory`  
+### Включить 128-bit trace id
 
-### io.jaegertracing.Tracer.Builder customization
+```properties
+opentracing.jaeger.enable-128-bit-traces=true
+```
 
-If arbitrary customizations need to be performed on `Tracer.Builder` but you don't want to forgo the rest of the auto-configuration
-features, `TracerBuilderCustomizer` comes in handy. It allows the developer to invoke any method of `Tracer.Builder` (with the exception of `build`)
-before the auto-configuration code invokes the `build` method.
-Examples of this type of customization can be seen in the `B3CodecTracerBuilderCustomizer` and `ExpandExceptionLogsTracerBuilderCustomizer` classes. 
+### Добавить tags из переменной окружения Jaeger
 
-## Caution
+```properties
+opentracing.jaeger.include-jaeger-env-tags=true
+```
 
-### Beware of the default sampler in production
+Значение читается из `JAEGER_TAGS` или соответствующего системного свойства Jaeger.
 
-In a high traffic environment, the default sampler that is configured is very unsafe since it samples every request.
-It is therefore highly recommended to explicitly configure on of the other options in a production environment
+## Расширенная настройка
 
-## Development
-Gradle checkstyle tasks are used to maintain consistent code style based on [Google Style Guides](https://github.com/google/styleguide)
+### Ручное объявление beans
+
+Приложение может самостоятельно объявить следующие beans. В этом случае они будут использованы вместо автоматически созданных:
+
+* `io.jaegertracing.spi.Sampler`;
+* `io.jaegertracing.spi.MetricsFactory`;
+* `io.jaegertracing.spi.Reporter`;
+* `io.opentracing.Tracer`.
+
+### Кастомизация `JaegerTracer.Builder`
+
+Если нужно донастроить `JaegerTracer.Builder`, но сохранить остальную автонастройку, используйте `TracerBuilderCustomizer`.
+
+Примеры таких customizer-классов:
+
+* `B3CodecTracerBuilderCustomizer`;
+* `TraceContextCodecTracerBuilderCustomizer`;
+* `ExpandExceptionLogsTracerBuilderCustomizer`;
+* `HigherBitTracerBuilderCustomizer`.
+
+## Важное предупреждение
+
+### Default sampler небезопасен для production
+
+По умолчанию используется `ConstSampler=true`, поэтому сэмплируется каждый request. В high traffic окружении это может создать большую нагрузку. Для production лучше явно настроить probabilistic, rate-limiting или remote sampler.
+
+## Разработка
+
+Проект собирается Gradle. Maven wrapper и `pom.xml` удалены.
+
+Для Windows:
+
+```powershell
+.\gradlew.bat clean build
+```
+
+Для Linux/macOS:
 
 ```shell
 ./gradlew clean build
 ```
 
-Run the Docker-backed Jaeger integration test explicitly:
+Эта команда запускает компиляцию, unit-тесты, Checkstyle и JaCoCo report.
+
+### Интеграционные тесты
+
+Интеграционные тесты запускаются явно, потому что им нужен Docker и Jaeger testcontainer.
+
+Windows:
+
+```powershell
+.\gradlew.bat clean build -PrunIntegrationTests
+```
+
+Linux/macOS:
 
 ```shell
 ./gradlew clean build -PrunIntegrationTests
 ```
 
-## Tips and tricks
+### JaCoCo
 
-### Completely disable tracing
+JaCoCo подключен во всех subprojects с версией `0.8.14`.
 
-There are times when it might be desirable to completely disable tracing (for example in a testing environment).
-Due to the multiple (auto)configurations that come into play, this is not as simple as setting `opentracing.jaeger.enabled` to `false`.
+После тестов отчеты появляются в директориях модулей:
 
-When one of the starters of this project is included, then `io.opentracing.contrib:opentracing-spring-tracer-configuration-starter` is also included since it performs some necessary plumbing.
-However, when `opentracing.jaeger.enabled` is set to `false`, then the aforementioned dependency provides a default `Tracer` implementation that needs the `JAEGER_SERVICE_NAME` environment variable (see [this](https://github.com/jaegertracing/jaeger-client-java/blob/master/jaeger-core/README.md)).
+```text
+build/reports/jacoco/test/html/index.html
+build/reports/jacoco/test/jacocoTestReport.xml
+```
 
-One simple way around this would be to do the add the following Spring configuration:
+Для модулей без тестов отчет может быть пропущен.
+
+### Checkstyle
+
+Checkstyle использует конфигурацию:
+
+```text
+config/checkstyle/checkstyle.xml
+```
+
+## Полное отключение tracing
+
+Иногда tracing нужно отключить полностью, например в тестовом окружении. Простого `opentracing.jaeger.enabled=false` может быть недостаточно, потому что другие OpenTracing auto-configurations ожидают bean типа `io.opentracing.Tracer`.
+
+Один из вариантов - объявить noop tracer:
 
 ```java
 @ConditionalOnProperty(value = "opentracing.jaeger.enabled", havingValue = "false", matchIfMissing = false)
@@ -216,29 +341,19 @@ public class MyTracerConfiguration {
 }
 ```
 
-In the code above we are activating a `io.opentracing.Tracer` iff `opentracing.jaeger.enabled` is set to `false`. This tracer
-is necessary to keep the various Spring configurations happy but has been configured to not sample any requests, therefore
-effectively disabling tracing.
+Такой tracer сохраняет корректную Spring-конфигурацию, но фактически не отправляет traces.
 
-### Trace id not propagated via the Feign client 
+## Trace id не пробрасывается через Feign client
 
-If you are using Feign, in some cases it might be necessary to explicitely expose the Feign client in the Spring configuration, in order to get the `uber-trace-id` propagated. This can be done easily by adding the following into one of your configuration classes:
+Если используется Feign, иногда нужно явно объявить Feign client в Spring-конфигурации, чтобы `uber-trace-id` корректно пробрасывался:
 
-```
+```java
 @Bean
 public Client feignClient() {
     return new Client.Default(null, null);
 }
 ```
 
-## Release
-Follow instructions in [RELEASE](RELEASE.md)
-
-   [ci-img]: https://travis-ci.org/opentracing-contrib/java-spring-jaeger.svg?branch=master
-   [ci]: https://travis-ci.org/opentracing-contrib/java-spring-jaeger
-   [maven-img]: https://img.shields.io/maven-central/v/io.opentracing.contrib/opentracing-spring-jaeger-starter.svg?maxAge=3600
-   [maven]: http://search.maven.org/#search%7Cga%7C1%7Copentracing-spring-jaeger-starter
-
-## License
+## Лицензия
 
 [Apache 2.0 License](./LICENSE).
