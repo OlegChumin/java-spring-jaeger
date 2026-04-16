@@ -1,0 +1,17 @@
+dependencies {
+    testImplementation project(':opentracing-spring-jaeger-web-starter')
+    testImplementation 'org.springframework.boot:spring-boot-autoconfigure:2.3.4.RELEASE'
+    testAnnotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.3.4.RELEASE'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-logging'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'io.opentracing:opentracing-mock:0.33.0'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.awaitility:awaitility:3.0.0'
+}
+
+tasks.named('test') {
+    onlyIf {
+        project.hasProperty('runIntegrationTests')
+    }
+}

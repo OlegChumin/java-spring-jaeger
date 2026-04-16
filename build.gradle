@@ -1,0 +1,38 @@
+allprojects {
+    group = 'io.opentracing.contrib'
+    version = '3.3.4-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'checkstyle'
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+
+    checkstyle {
+        toolVersion = '8.3'
+        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    }
+
+    dependencies {
+        implementation platform('org.springframework.boot:spring-boot-dependencies:2.3.4.RELEASE')
+        testImplementation platform('org.springframework.boot:spring-boot-dependencies:2.3.4.RELEASE')
+
+        testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}

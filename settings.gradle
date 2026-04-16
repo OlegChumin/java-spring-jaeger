@@ -1,0 +1,6 @@
+rootProject.name = 'opentracing-spring-jaeger-parent'
+
+include 'opentracing-spring-jaeger-starter'
+include 'opentracing-spring-jaeger-cloud-starter'
+include 'opentracing-spring-jaeger-web-starter'
+include 'opentracing-spring-jaeger-web-starter-it'

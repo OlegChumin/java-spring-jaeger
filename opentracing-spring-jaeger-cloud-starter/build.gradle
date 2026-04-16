@@ -1,0 +1,4 @@
+dependencies {
+    api project(':opentracing-spring-jaeger-starter')
+    api 'io.opentracing.contrib:opentracing-spring-cloud-starter:0.5.9'
+}

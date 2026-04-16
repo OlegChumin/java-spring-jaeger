@@ -180,10 +180,16 @@ In a high traffic environment, the default sampler that is configured is very un
 It is therefore highly recommended to explicitly configure on of the other options in a production environment
 
 ## Development
-Maven checkstyle plugin is used to maintain consistent code style based on [Google Style Guides](https://github.com/google/styleguide)
+Gradle checkstyle tasks are used to maintain consistent code style based on [Google Style Guides](https://github.com/google/styleguide)
 
 ```shell
-./mvnw clean install
+./gradlew clean build
+```
+
+Run the Docker-backed Jaeger integration test explicitly:
+
+```shell
+./gradlew clean build -PrunIntegrationTests
 ```
 
 ## Tips and tricks

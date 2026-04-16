@@ -1,0 +1,14 @@
+dependencies {
+    api 'io.opentracing.contrib:opentracing-spring-tracer-configuration-starter:0.4.0'
+    api 'io.opentracing:opentracing-api:0.33.0'
+    api 'io.jaegertracing:jaeger-client:1.6.0'
+
+    compileOnly 'org.springframework.boot:spring-boot-autoconfigure:2.3.4.RELEASE'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.3.4.RELEASE'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-logging'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'io.opentracing:opentracing-mock:0.33.0'
+    testImplementation 'org.assertj:assertj-core'
+}

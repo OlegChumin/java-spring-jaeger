@@ -1,0 +1,6 @@
+dependencies {
+    api project(':opentracing-spring-jaeger-starter')
+    api('io.opentracing.contrib:opentracing-spring-web-starter:4.0.0') {
+        exclude group: 'io.opentracing.contrib', module: 'opentracing-spring-tracer-configuration-starter'
+    }
+}
